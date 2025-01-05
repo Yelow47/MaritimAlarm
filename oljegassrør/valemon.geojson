@@ -1,0 +1,25 @@
+{
+      "type": "Feature",
+      "properties": {
+        "id": "434386",
+        "name": "Valemon Kondensatrør",
+        "p": "IN SERVICE",
+        "c": "32011216",
+        "fclf": "VALEMON",
+        "fclt": "KVITEBJØRN",
+        "m": "Condensate",
+        "dim": "8",
+        "be": "VALEMON KONDENSATRØR"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [2.495120372, 61.084199093],
+          [2.494185, 61.084314],
+          [2.480242, 61.08378],
+          [2.467662, 61.081591],
+          [2.375453, 61.053958],
+          [2.346529882, 61.04327219]
+        ]
+      }
+    }

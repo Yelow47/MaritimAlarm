@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MaritimAlarm</title>
+    <!-- Link to favicon -->
+    <link rel="icon" href="data/favicon.ico" type="image/x-icon">
+    <!-- Include Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <link rel="stylesheet" href="styles.css" />
+    <!-- Include Turf.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@turf/turf/turf.min.js"></script>
+</head>
+<body>
+    <!-- Left panel -->
+    <div class="left-panel">
+        <!-- Logo -->
+        <div class="panel-logo">
+            <img src="data/MaritimAlarm.png" alt="MaritimAlarm Logo">
+        </div>
+
+        <!-- Layer selectors -->
+        <div class="layer-selector">
+            <h3>Lagvalg</h3>
+            <div class="layer-button-container">
+                <span class="layer-button-label">Gassrør</span>
+                <button class="layer-button gas"></button>
+            </div>
+            <div class="layer-button-container">
+                <span class="layer-button-label">Oljerør</span>
+                <button class="layer-button oil"></button>
+            </div>
+            <div class="layer-button-container">
+                <span class="layer-button-label">Fiberkabel</span>
+                <button class="layer-button fiber"></button>
+            </div>
+            <div class="layer-button-container">
+                <span class="layer-button-label">Kondensatrør</span>
+                <button class="layer-button condensate"></button>
+            </div>
+        </div>
+
+        <!-- "Om nettsiden" button -->
+        <button class="about-button">Om nettsiden</button>
+    </div>
+
+    <!-- Map container -->
+    <div id="map"></div>
+
+    <!-- Alarms box -->
+    <div class="alarms-box">
+        <div class="alarms-header">Alarmer</div>
+        <div id="alarms-container">
+            <!-- Dynamically added alarms -->
+        </div>
+    </div>
+
+    <!-- Include Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <!-- Include your own JavaScript -->
+    <script src="scripts.js"></script>
+</body>
+</html>
+

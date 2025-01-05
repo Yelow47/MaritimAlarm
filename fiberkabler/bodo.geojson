@@ -1,0 +1,22 @@
+{
+  "type": "Feature",
+  "geometry": {
+    "type": "MultiLineString",
+    "coordinates": [
+      [
+        [12.070166, 67.50256],
+        [12.150066, 67.439493],
+        [13.950064, 67.266219],
+        [14.400064, 67.285998]
+      ]
+    ]
+  },
+  "properties": {
+    "name": "Bodo-Rost Cable",
+    "description": "Ready For Service: 2016\nCable Length: 109 km\nOwners: Telenor\nSuppliers: Nexans\nURL: n/a\nNotes: n/a\n\nLanding Points:\n- Bodø, Norway\n- Røst, Norway",
+    "_umap_options": {
+      "color": "#395eab"
+    }
+  },
+  "id": "Y5MDU"
+}

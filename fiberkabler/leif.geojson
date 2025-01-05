@@ -1,0 +1,33 @@
+{
+  "type": "Feature",
+  "geometry": {
+    "type": "MultiLineString",
+    "coordinates": [
+      [
+        [5.73077, 58.970821],
+        [3.600072, 59.90607],
+        [0.000074, 60.978877],
+        [-2.249924, 60.978877],
+        [-5.399922, 60.465393],
+        [-7.64992, 60.018698],
+        [-8.999919, 59.679664],
+        [-12.599917, 59.068366],
+        [-23.399909, 57.086066],
+        [-39.599898, 55.334581],
+        [-53.999888, 54.646145],
+        [-56.249886, 54.515746],
+        [-58.049885, 54.253694],
+        [-59.399884, 53.724559],
+        [-60.326084, 53.301683]
+      ]
+    ]
+  },
+  "properties": {
+    "name": "Leif Erikson",
+    "description": "Ready For Service: 2024 Q3\nCable Length: 4,200 km\nOwners: Bulk\nSuppliers: n/a\nURL: n/a\nNotes: n/a\n\nLanding Points:\n- Goose Bay, NL, Canada\n- Stavanger, Norway",
+    "_umap_options": {
+      "color": "#939597"
+    }
+  },
+  "id": "IxNzE"
+}

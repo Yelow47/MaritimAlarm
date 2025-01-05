@@ -1,0 +1,48 @@
+{
+  "type": "Feature",
+  "geometry": {
+    "type": "MultiLineString",
+    "coordinates": [
+      [
+        [1.729273, 52.468823],
+        [1.912573, 52.623261],
+        [2.250073, 53.233595],
+        [2.475072, 54.034038],
+        [2.812572, 54.819362],
+        [3.600072, 56.345223],
+        [2.984972, 56.549192],
+        [2.700072, 56.840739],
+        [2.475072, 57.8124],
+        [2.700072, 58.991177],
+        [4.050071, 58.875068],
+        [5.175071, 58.991177],
+        [5.52448, 59.279268]
+      ],
+      [
+        [-2.106804, 57.153796],
+        [-1.799924, 57.086066],
+        [2.700072, 56.840739]
+      ],
+      [
+        [3.600072, 56.345223],
+        [4.500071, 56.593793],
+        [6.30007, 57.692345],
+        [6.752799, 58.082771]
+      ],
+      [
+        [2.700072, 58.991177],
+        [3.375072, 59.90607],
+        [4.500071, 60.576117],
+        [4.830251, 60.58734]
+      ]
+    ]
+  },
+  "properties": {
+    "name": "Tampnet Offshore FOC Network",
+    "description": "Ready For Service: 1999 July\nCable Length: 1,751 km\nOwners: Tampnet\nSuppliers: ASN\nURL: https://www.tampnet.com/\nNotes: n/a\n\nLanding Points:\n- Farsund, Norway\n- Kårstø, Norway\n- Øygarden, Norway\n- Aberdeen, United Kingdom\n- Lowestoft, United Kingdom",
+    "_umap_options": {
+      "color": "#97489b"
+    }
+  },
+  "id": "QxNDQ"
+}

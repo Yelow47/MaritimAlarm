@@ -1,0 +1,23 @@
+{
+  "type": "Feature",
+  "geometry": {
+    "type": "MultiLineString",
+    "coordinates": [
+      [
+        [10.016367, 59.081111],
+        [10.012567, 58.933171],
+        [9.900067, 58.34773],
+        [9.900067, 57.8124],
+        [9.959267, 57.588188]
+      ]
+    ]
+  },
+  "properties": {
+    "name": "Skagenfiber West",
+    "description": "Ready For Service: 2020 November\nCable Length: 170 km\nOwners: Altibox\nSuppliers: n/a\nURL: n/a\nNotes: n/a\n\nLanding Points:\n- Hirtshals, Denmark\n- Larvik, Norway",
+    "_umap_options": {
+      "color": "#2ab34a"
+    }
+  },
+  "id": "AwNTA"
+}

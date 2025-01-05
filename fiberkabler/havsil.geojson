@@ -1,0 +1,22 @@
+{
+  "type": "Feature",
+  "geometry": {
+    "type": "MultiLineString",
+    "coordinates": [
+      [
+        [8.616168, 57.11165],
+        [8.662568, 57.289274],
+        [7.987569, 57.932057],
+        [7.996259, 58.151066]
+      ]
+    ]
+  },
+  "properties": {
+    "name": "Havsil",
+    "description": "Ready For Service: 2022 March\nCable Length: 120 km\nOwners: Bulk\nSuppliers: n/a\nURL: n/a\nNotes: n/a\n\nLanding Points:\n- Hanstholm, Denmark\n- Kristiansand, Norway",
+    "_umap_options": {
+      "color": "#2b2f83"
+    }
+  },
+  "id": "c5ODA"
+}

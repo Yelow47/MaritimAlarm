@@ -1,0 +1,37 @@
+{
+  "type": "Feature",
+  "geometry": {
+    "type": "MultiLineString",
+    "coordinates": [
+      [
+        [15.557773, 78.22195],
+        [14.400064, 78.179016],
+        [13.500065, 78.179016],
+        [12.600065, 78.039939],
+        [11.700066, 77.07069],
+        [12.600065, 73.422115],
+        [16.200063, 69.737246],
+        [16.875062, 69.104595],
+        [16.875062, 68.862519],
+        [16.512463, 68.706903],
+        [16.987562, 68.862519],
+        [17.100062, 69.104595],
+        [16.650062, 69.737246],
+        [13.050065, 73.422115],
+        [12.150066, 77.07069],
+        [13.050065, 78.039939],
+        [13.500065, 78.132835],
+        [14.400064, 78.155947],
+        [15.557773, 78.22195]
+      ]
+    ]
+  },
+  "properties": {
+    "name": "Svalbard Undersea Cable System",
+    "description": "Ready For Service: 2004 January\nCable Length: 2,714 km\nOwners: Telenor\nSuppliers: SubCom\nURL: n/a\nNotes: n/a\n\nLanding Points:\n- Breivika, Norway\n- Longyearbyen, Svalbard, Norway",
+    "_umap_options": {
+      "color": "#944c9d"
+    }
+  },
+  "id": "c0MjU"
+}

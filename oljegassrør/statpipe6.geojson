@@ -1,0 +1,21 @@
+{
+      "type": "Feature",
+      "properties": {
+        "id": "318010",
+        "name": "Statpipie",
+        "p": "IN SERVICE",
+        "c": "1944954",
+        "fclf": "STATFJORD B",
+        "fclt": "STAT-SSTC",
+        "m": "Gas",
+        "dim": "30",
+        "be": "GASSLED"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [1.831525778, 61.202445048],
+          [1.845936, 61.18583]
+        ]
+      }
+    }

@@ -1,0 +1,42 @@
+{
+  "type": "Feature",
+  "geometry": {
+    "type": "MultiLineString",
+    "coordinates": [
+      [
+        [-74.062863, 40.152834],
+        [-71.099875, 40.55848],
+        [-68.399877, 41.238752],
+        [-61.199882, 42.412355],
+        [-50.39989, 44.694829],
+        [-39.599898, 47.50229],
+        [-23.399909, 52.963398],
+        [-16.199914, 55.077801],
+        [-8.999919, 58.991177],
+        [-5.399922, 59.679664],
+        [-1.799924, 59.451717],
+        [1.800073, 58.524394],
+        [4.500071, 57.57189],
+        [5.40007, 56.717468],
+        [6.30007, 56.220327],
+        [7.200069, 55.843186],
+        [7.650069, 55.77997],
+        [8.329168, 55.75165]
+      ],
+      [
+        [7.996259, 58.151066],
+        [7.875069, 57.932057],
+        [6.30007, 57.57189],
+        [4.500071, 57.57189]
+      ]
+    ]
+  },
+  "properties": {
+    "name": "Havfrue/AEC-2",
+    "description": "Ready For Service: 2020 November\nCable Length: 7,650 km\nOwners: Aqua Comms, Bulk, Google, Meta\nSuppliers: SubCom\nURL: n/a\nNotes: Aqua Comms acts as the overall system administrator for the Havfrue cable, and has dubbed the portion of the cable where it has ownership (Denmark, Ireland, and U.S. segments) as AEC-2. Bulk Infrastructure is the Norwegian landing party for Havfrue.\n\nLanding Points:\n- Blaabjerg, Denmark\n- Lecanvey, Ireland\n- Kristiansand, Norway\n- Wall Township, NJ, United States",
+    "_umap_options": {
+      "color": "#30aa9f"
+    }
+  },
+  "id": "EyMDA"
+}

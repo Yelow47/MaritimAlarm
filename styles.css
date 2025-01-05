@@ -1,0 +1,216 @@
+/* Full-screen setup */
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+#map {
+    position: absolute;
+    top: 0;
+    left: 250px; /* Space for the left panel */
+    width: calc(100% - 250px); /* Adjust width based on the panel */
+    height: 100%;
+}
+
+/* Left panel */
+.left-panel {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 250px; /* Panel width */
+    height: 100%; /* Full height */
+    background-color: rgba(0, 0, 0, 0.8); /* Dark background */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* Align content to the left */
+    padding: 20px 10px;
+    box-sizing: border-box;
+    overflow-y: auto; /* Allow vertical scrolling */
+}
+
+/* Logo in left panel */
+.panel-logo {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.panel-logo img {
+    width: 80%; /* Fill most of the panel width */
+    height: auto; /* Maintain proportions */
+}
+
+/* Layer selector container */
+.layer-selector {
+    display: flex;
+    flex-direction: column;
+    margin-top: 20px; /* Add space below the logo */
+    width: 100%;
+    align-items: flex-start;
+}
+
+.layer-selector h3 {
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    text-align: left;
+    margin-bottom: 10px;
+    margin-left: 10px;
+}
+
+/* Layer button container with text */
+.layer-button-container {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    margin-bottom: 10px;
+    width: 100%;
+}
+
+.layer-button-label {
+    font-size: 16px;
+    color: white;
+    margin-right: 10px;
+    width: 100px; /* Ensure consistent width for labels */
+}
+
+/* Layer buttons */
+.layer-button {
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+/* Specific colors for each layer */
+.layer-button.gas {
+    background-color: blue;
+}
+
+.layer-button.oil {
+    background-color: black;
+}
+
+.layer-button.fiber {
+    background-color: green;
+}
+
+.layer-button.condensate {
+    background-color: purple;
+}
+
+/* Hover effect for buttons */
+.layer-button:hover {
+    transform: scale(1.1); /* Slightly enlarge on hover */
+}
+
+/* Alarms box */
+.alarms-box {
+    position: absolute;
+    top: 20px; /* Position in the top-right corner */
+    right: 20px; /* Slightly inset from the right */
+    width: 220px; /* Slightly wider box */
+    height: 400px; /* Higher box for future alarms */
+    background-color: rgba(128, 128, 128, 0.8); /* Gray and semi-transparent */
+    border: 1px solid black; /* Border line */
+    border-radius: 5px; /* Rounded corners */
+    padding: 10px;
+    box-sizing: border-box;
+    color: black;
+    font-family: Arial, sans-serif;
+    z-index: 1000; /* Ensure visibility above the map */
+}
+
+/* Alarm header */
+.alarms-header {
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+    color: black; /* Black text */
+    margin-bottom: 10px;
+}
+
+/* Individual alarm item */
+.alarm-item {
+    padding: 5px;
+    margin-bottom: 5px;
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.alarm-item:hover {
+    background-color: #f0f0f0;
+}
+
+/* "Om nettsiden" button styles */
+.about-button {
+    margin-top: auto; /* Push to the bottom of the left panel */
+    width: 90%; /* Make the button fit nicely inside the panel */
+    padding: 10px;
+    background-color: #444;
+    color: white;
+    text-align: center;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+.about-button:hover {
+    background-color: #666;
+}
+
+/* Modal overlay (background behind the modal) */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent black */
+    display: none; /* Hidden by default */
+    z-index: 2000; /* Above other elements */
+}
+
+/* Modal box */
+.modal-box {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 50%; /* Adjust size as needed */
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 3000; /* Above the overlay */
+}
+
+/* Close button in modal */
+.modal-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: #ccc;
+    color: black;
+    border: none;
+    border-radius: 50%;
+    width: 25px;
+    height: 25px;
+    text-align: center;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.modal-close:hover {
+    background-color: #aaa;
+}

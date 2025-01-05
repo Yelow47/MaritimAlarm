@@ -1,0 +1,28 @@
+{
+  "type": "Feature",
+  "geometry": {
+    "type": "MultiLineString",
+    "coordinates": [
+      [
+        [13.018229, 66.198066],
+        [13.050065, 66.245218],
+        [13.218815, 66.290495],
+        [13.387565, 66.313103],
+        [13.563639, 66.292968],
+        [13.563639, 66.247734],
+        [13.624479, 66.224163],
+        [13.781314, 66.256524],
+        [13.950064, 66.256524],
+        [14.141959, 66.313711]
+      ]
+    ]
+  },
+  "properties": {
+    "name": "Tverrlinken",
+    "description": "Ready For Service: 2010\nCable Length: n/a\nOwners: KystTele\nSuppliers: n/a\nURL: n/a\nNotes: n/a\n\nLanding Points:\n- Hemnesberget, Norway\n- Mo I Rana, Norway\n- Nesna, Norway\n- Utskarpen, Norway",
+    "_umap_options": {
+      "color": "#1bbaae"
+    }
+  },
+  "id": "A1MjQ"
+}

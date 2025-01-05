@@ -1,0 +1,27 @@
+{
+  "type": "Feature",
+  "geometry": {
+    "type": "MultiLineString",
+    "coordinates": [
+      [
+        [-1.617778, 54.978249],
+        [-0.899925, 55.334581],
+        [0.900074, 55.843186],
+        [2.534972, 56.549192],
+        [3.375072, 58.051316],
+        [4.050071, 58.641678],
+        [5.175071, 58.875068],
+        [5.51257, 58.991177],
+        [5.73077, 58.970821]
+      ]
+    ]
+  },
+  "properties": {
+    "name": "NO-UK",
+    "description": "Ready For Service: 2021 December\nCable Length: 713 km\nOwners: Altibox\nSuppliers: Xtera\nURL: n/a\nNotes: n/a\n\nLanding Points:\n- Stavanger, Norway\n- Newcastle, United Kingdom",
+    "_umap_options": {
+      "color": "#ac84bb"
+    }
+  },
+  "id": "kxMzU"
+}

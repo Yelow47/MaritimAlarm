@@ -1,0 +1,25 @@
+{
+      "type": "Feature",
+      "properties": {
+        "id": "321036",
+        "name": "Zeepipe I",
+        "p": "IN SERVICE",
+        "c": "1944954",
+        "fclf": "SLEIPNER R",
+        "fclt": "DRAUPNER S",
+        "m": "Gas",
+        "dim": "30",
+        "be": "ZEEPIPE I"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [1.916023054, 58.365082279],
+          [1.919014, 58.363547],
+          [2.003953, 58.327914],
+          [2.232014, 58.252297],
+          [2.26995, 58.241761],
+          [2.464368884, 58.190946832]
+        ]
+      }
+    }

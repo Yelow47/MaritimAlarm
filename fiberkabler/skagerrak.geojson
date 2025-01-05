@@ -1,0 +1,27 @@
+{
+  "type": "Feature",
+  "geometry": {
+    "type": "MultiLineString",
+    "coordinates": [
+      [
+        [7.996259, 58.151066],
+        [8.437568, 57.932057],
+        [8.775068, 57.57189],
+        [9.112568, 57.147146],
+        [9.112568, 56.840739],
+        [9.225068, 56.717468],
+        [9.281318, 56.593793],
+        [9.337568, 56.562811],
+        [9.611687, 56.510792]
+      ]
+    ]
+  },
+  "properties": {
+    "name": "Skagerrak 4",
+    "description": "Ready For Service: 2014 December\nCable Length: 137 km\nOwners: Statnett\nSuppliers: n/a\nURL: n/a\nNotes: n/a\n\nLanding Points:\n- Tjele, Denmark\n- Kristiansand, Norway",
+    "_umap_options": {
+      "color": "#60bb46"
+    }
+  },
+  "id": "I1NzY"
+}

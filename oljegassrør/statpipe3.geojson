@@ -1,0 +1,22 @@
+{
+      "type": "Feature",
+      "properties": {
+        "id": "325524",
+        "name": "Statpipe",
+        "p": "IN SERVICE",
+        "c": "34925006",
+        "fclf": "BRAGE",
+        "fclt": "BRAGE-T",
+        "m": "Gas",
+        "dim": "8.625",
+        "be": "BRAGE"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [2.898055, 60.560633],
+          [3.009877, 60.543819],
+          [3.037825495, 60.543328998]
+        ]
+      }
+    }
