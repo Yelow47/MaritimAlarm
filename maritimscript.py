@@ -2,18 +2,16 @@ import requests
 import json
 from datetime import datetime
 
-# Configuration
 TOKEN_URL = "https://id.barentswatch.no/connect/token"
 API_URL = "https://live.ais.barentswatch.no/v1/combined?modelType=Full&modelFormat=Geojson"
-CLIENT_ID = "XXXXXXXXXX"
-CLIENT_SECRET = "XXXXXXXXX"
-SCOPE = "XXXXXXXXX"
+CLIENT_ID = "XXXXXXXXXXXXX"
+CLIENT_SECRET = "XXXXXXXX"
+SCOPE = "XXXXX"
 RECEIVE_URL = "https://www.maritimalarm.no/receive.php"
+SHADOWFLEET_PATH = "/home/XXXXXX/XXXXXXX/shadowfleet.json"
 
-# Ship tracking
 ships = {}
 
-# Navigational Status Mapping
 status_mapping = {
     0: "Under way using engine",
     1: "At anchor",
@@ -27,11 +25,19 @@ status_mapping = {
     15: "Undefined"
 }
 
-# Helper function to serialize datetime
 def serialize_datetime(obj):
     if isinstance(obj, datetime):
         return obj.isoformat()
     raise TypeError("Type not serializable")
+
+def load_shadowfleet():
+    try:
+        with open(SHADOWFLEET_PATH, "r") as file:
+            data = json.load(file)
+            return set(data)
+    except Exception as e:
+        print(f"Failed to load shadowfleet.json: {e}")
+        return set()
 
 def get_access_token():
     try:
@@ -48,14 +54,14 @@ def get_access_token():
 
 def send_data_to_server(data, data_type):
     try:
-        json_data = json.dumps(data, default=serialize_datetime)  # Serialize datetime objects
+        json_data = json.dumps(data, default=serialize_datetime)
         response = requests.post(RECEIVE_URL, data={"json_data": json_data, "type": data_type})
         response.raise_for_status()
         print(f"{data_type.capitalize()} data sent to {RECEIVE_URL} successfully!")
     except requests.exceptions.RequestException as e:
         print(f"Failed to send {data_type} data to {RECEIVE_URL}: {e}")
 
-def fetch_continuous_stream(token):
+def fetch_continuous_stream(token, shadowfleet_mmsi):
     try:
         headers = {
             "Authorization": f"Bearer {token}",
@@ -66,7 +72,6 @@ def fetch_continuous_stream(token):
             "modelType": "Full",
             "Downsample": False
         }
-
         print("Connecting to API for continuous stream...")
         with requests.post(API_URL, json=payload, headers=headers, stream=True) as response:
             response.raise_for_status()
@@ -75,17 +80,13 @@ def fetch_continuous_stream(token):
             for line in response.iter_lines():
                 if line:
                     try:
-                        # Decode JSON objects
                         ship_data = json.loads(line.decode('utf-8'))
-                        print(json.dumps(ship_data, indent=2))
-
                         mmsi = ship_data["mmsi"]
                         if mmsi not in ships:
                             ships[mmsi] = {"mmsi": mmsi, "last_seen": datetime.utcnow()}
                         else:
                             ships[mmsi]["last_seen"] = datetime.utcnow()
 
-                        # Ensure all relevant fields are included
                         ships[mmsi].update({
                             "latitude": ship_data.get("latitude"),
                             "longitude": ship_data.get("longitude"),
@@ -94,12 +95,12 @@ def fetch_continuous_stream(token):
                             "heading": ship_data.get("trueHeading"),
                             "name": ship_data.get("name", "Unknown"),
                             "destination": ship_data.get("destination", "Unknown"),
-                            "status_text": status_mapping.get(ship_data.get("navigationalStatus"), "Unknown")  # Human-readable status
+                            "status_text": status_mapping.get(ship_data.get("navigationalStatus"), "Unknown")
                         })
 
-                        # Send ship data to the server
-                        send_data_to_server(ships[mmsi], "ships")
-
+                        if mmsi in shadowfleet_mmsi or ship_data.get("countryCode") == "RU":
+                            print(f"MMSI {mmsi} is being sent as 'ships'.")
+                            send_data_to_server(ships[mmsi], "ships")
                     except json.JSONDecodeError as e:
                         print(f"Failed to decode JSON line: {line}, Error: {e}")
     except requests.exceptions.RequestException as e:
@@ -108,11 +109,11 @@ def fetch_continuous_stream(token):
 
 def main():
     try:
+        shadowfleet_mmsi = load_shadowfleet()
+        print(f"Loaded {len(shadowfleet_mmsi)} MMSI numbers from shadowfleet.json.")
         token = get_access_token()
         print(f"Token: {token}")
-
-        # Fetch AIS data continuously
-        fetch_continuous_stream(token)
+        fetch_continuous_stream(token, shadowfleet_mmsi)
     except Exception as e:
         print(f"Error: {e}")
 
