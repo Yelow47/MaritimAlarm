@@ -443,6 +443,7 @@ const geojsonFiles = [
     'data/zeepipe2.geojson',
     'data/zeepipe3.geojson',
     'data/zeepipe4.geojson'
+    
 ];
 
 
@@ -465,3 +466,28 @@ setInterval(() => {
         }
     }
 }, 60000);
+
+
+
+// Add event listeners for layer buttons to toggle layers
+document.addEventListener("DOMContentLoaded", function () {
+    const layerButtons = {
+        gas: document.querySelector('.layer-button.gas'),
+        oil: document.querySelector('.layer-button.oil'),
+        fiber: document.querySelector('.layer-button.fiber'),
+        condensate: document.querySelector('.layer-button.condensate')
+    };
+
+    Object.entries(layerButtons).forEach(([layerType, button]) => {
+        button.addEventListener("click", () => {
+            const layer = geojsonLayers[layerType];
+            if (map.hasLayer(layer)) {
+                map.removeLayer(layer);
+                button.classList.remove("active");
+            } else {
+                map.addLayer(layer);
+                button.classList.add("active");
+            }
+        });
+    });
+});
