@@ -442,14 +442,7 @@ const geojsonFiles = [
     'data/zeepipe1.geojson',
     'data/zeepipe2.geojson',
     'data/zeepipe3.geojson',
-    'data/zeepipe4.geojson',
-    'data/northsealink.geojson',
-    'data/norned.geojson',
-    'data/nordlink.geojson',
-    'data/skagerrakstrom.geojson',
-    'data/skagerrakstrom2.geojson',
-    'data/skagerrakstrom3.geojson',
-    'data/skagerrakstrom4.geojson'
+    'data/zeepipe4.geojson'
 ];
 
 
