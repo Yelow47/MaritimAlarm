@@ -1,15 +1,11 @@
 <?php
-$allowedOrigins = ['https://www.maritimalarm.no'];
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type, Authorization");
 
-if (isset($_SERVER['HTTP_ORIGIN']) && in_array($_SERVER['HTTP_ORIGIN'], $allowedOrigins)) {
-    header("Access-Control-Allow-Origin: " . $_SERVER['HTTP_ORIGIN']);
-    header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
-    header("Access-Control-Allow-Headers: Content-Type, Authorization");
-
-    if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-        http_response_code(200);
-        exit;
-    }
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit;
 }
 
 define('MAX_FILE_SIZE', 1000 * 1024);
@@ -18,12 +14,15 @@ define('DATA_RETENTION_THRESHOLD', 5 * 60 * 60);
 function pruneOldShipData($existingData, $newData) {
     $currentTime = time();
 
+    if (!is_array($existingData)) {
+        $existingData = [];
+    }
+
     $existingData = array_filter($existingData, function ($entry) use ($currentTime) {
         return isset($entry['last_seen']) && (strtotime($entry['last_seen']) > ($currentTime - DATA_RETENTION_THRESHOLD));
     });
 
     $existingData[$newData['mmsi']] = $newData;
-
     return $existingData;
 }
 
@@ -34,8 +33,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($type === 'ships') {
             $filePath = 'ship_data.json';
-            $existingData = file_exists($filePath) ? json_decode(file_get_contents($filePath), true) : [];
-            $existingData = pruneOldShipData($existingData, $data);
+            if (file_exists($filePath)) {
+                $content = file_get_contents($filePath);
+                $existingData = json_decode($content, true);
+                if (!is_array($existingData)) {
+                    $existingData = [];
+                }
+            } else {
+                $existingData = [];
+            }
+
+            $existingData = pruneOldShipData($existingData, $data); // Prune old data and update with new data
 
             if (strlen(json_encode($existingData)) > MAX_FILE_SIZE) {
                 echo "File size exceeded. Unable to save new data.";
@@ -46,7 +54,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             echo "Ships data received and cleaned successfully.";
         } elseif ($type === 'alarms') {
             $filePath = 'alarm_data.json';
-            $existingData = file_exists($filePath) ? json_decode(file_get_contents($filePath), true) : [];
+            if (file_exists($filePath)) {
+                $content = file_get_contents($filePath);
+                $existingData = json_decode($content, true);
+                if (!is_array($existingData)) {
+                    $existingData = [];
+                }
+            } else {
+                $existingData = [];
+            }
+
             $existingData[] = $data;
             file_put_contents($filePath, json_encode($existingData, JSON_PRETTY_PRINT));
             echo "Alarms data received successfully.";
@@ -86,6 +103,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     exit;
 }
 
+// Invalid request method
 echo "Invalid request method.";
 exit;
 ?>
