@@ -113,17 +113,20 @@ modalBox.className = 'modal-box';
 modalBox.innerHTML = `
     <button class="modal-close">&times;</button>
     <h2>Om nettsiden</h2>
-    <p>Denne nettsidens formål er å overvåke sivil russisk skipsaktivitet i Norge, med hensikt å avdekke potensielle trusler mot norsk infrastruktur. 
+    <p>Denne nettsidens formål er å overvåke sivil russisk skipsaktivitet i Norge, med hensikt å avdekke potensielle trusler mot norsk infrastruktur. Nettsiden viser nå også skip fra skyggeflåten.
 Skipene vises i sanntid, og deres posisjon og aktivitet kan trigge "alarmer". 
-En alarm trigges dersom et fartøy enten: Oppholder innenfor 2km av infrastruktur i over 1 time.
+En alarm trigges dersom et fartøy enten: Oppholder innenfor 1nm av infrastruktur i over 1 time.
 Eller: Slutter å transmitere AIS data i over 1 time.
+Eller: Har en hastighet på 2-5 knop i over 30 minutter.
 Disse kriteriene kan justeres ved forespørsel.
 
 NB:
-Kartet viser kun russiske skip innenfor AIS mottakerrekkevidde, og eksluderer skip som er ankret/ligger til kai. 
+Kartet viser kun skip innenfor AIS mottakerrekkevidde, og eksluderer skip som er ankret/ligger til kai. 
+Nettsiden er ikke enda optimalisert for mobil.
 
 All AIS data tilhører Kystverket, og er hentet gjennom Barentswatch.no sin API.
 Hendvendelser kan sendes til MaritimAlarm@gmail.com
+
 
   </p>
 `;
@@ -321,50 +324,6 @@ function addLayerSelector() {
 // Call the function to dynamically add the layer selectors
 addLayerSelector();
 
-// Fetch ship data and display markers
-function fetchShipData() {
-    fetch('https://www.maritimalarm.no/receive.php?type=ships')
-        .then(response => {
-            if (!response.ok) throw new Error(`HTTP error while fetching ship data: ${response.status}`);
-            return response.json();
-        })
-        .then(shipData => {
-            const currentTime = Date.now();
-            Object.values(shipData).forEach(ship => {
-                const { mmsi, latitude, longitude, heading, name, destination, navigational_status } = ship;
-
-                if ([1, 5].includes(ship.navigational_status)) return;
-
-                if (!lastSeenTracker[mmsi]) {
-                    lastSeenTracker[mmsi] = { lastSeen: currentTime, name };
-                } else {
-                    lastSeenTracker[mmsi].lastSeen = currentTime;
-                    lastSeenTracker[mmsi].alarmTriggered = false;
-                }
-
-                if (shipMarkers[mmsi]) {
-                    map.removeLayer(shipMarkers[mmsi]);
-                }
-                const marker = L.marker([latitude, longitude], {
-                    icon: getShipIcon(heading || 0)
-                }).bindPopup(`
-                    <strong>Name:</strong> ${name || "Unknown"}<br>
-                    <strong>MMSI:</strong> ${mmsi}<br>
-                    <strong>Destination:</strong> ${destination || "Unknown"}<br>
-                    <strong>Heading:</strong> ${heading || "Unknown"}°<br>
-                    <strong>Status:</strong> ${statusMapping[navigational_status] || "Unknown"}
-                `);
-
-                marker.addTo(map);
-                shipMarkers[mmsi] = marker;
-            });
-        })
-        .catch(error => console.error('Error fetching ship data:', error));
-}
-
-// Add layer selector and load pipelines dynamically
-addLayerSelector();
-
 const geojsonFiles = [
     'data/bodo.geojson',
     'data/celtic.geojson',
@@ -443,11 +402,51 @@ const geojsonFiles = [
     'data/zeepipe2.geojson',
     'data/zeepipe3.geojson',
     'data/zeepipe4.geojson'
-    
 ];
-
-
 geojsonFiles.forEach(filePath => loadAndClassifyGeoJSON(filePath));
+
+function fetchShipData() {
+    fetch('https://www.maritimalarm.no/receive.php?type=ships')
+        .then(response => {
+            if (!response.ok) throw new Error(`HTTP error while fetching ship data: ${response.status}`);
+            return response.json();
+        })
+        .then(shipData => {
+            const currentTime = Date.now();
+            Object.values(shipData).forEach(ship => {
+                const { mmsi, latitude, longitude, heading, name, destination, navigational_status, speed_over_ground } = ship;
+
+                if ([1, 5].includes(navigational_status)) return;
+
+                if (!lastSeenTracker[mmsi]) {
+                    lastSeenTracker[mmsi] = { lastSeen: currentTime, name };
+                } else {
+                    lastSeenTracker[mmsi].lastSeen = currentTime;
+                    lastSeenTracker[mmsi].alarmTriggered = false;
+                }
+
+                if (shipMarkers[mmsi]) {
+                    map.removeLayer(shipMarkers[mmsi]);
+                }
+
+                const marker = L.marker([latitude, longitude], {
+                    icon: getShipIcon(heading || 0)
+                }).bindPopup(`
+                    <strong>Name:</strong> ${name || "Unknown"}<br>
+                    <strong>MMSI:</strong> ${mmsi}<br>
+                    <strong>Destination:</strong> ${destination || "Unknown"}<br>
+                    <strong>Heading:</strong> ${heading || "Unknown"}°<br>
+                    <strong>Status:</strong> ${statusMapping[navigational_status] || "Unknown"}<br>
+                    <strong>Speed:</strong> ${speed_over_ground || "Unknown"} knots
+                `);
+
+                marker.addTo(map);
+                shipMarkers[mmsi] = marker;
+            });
+        })
+        .catch(error => console.error('Error fetching ship data:', error));
+}
+
 
 // Periodically fetch ship data and check last-seen status
 setInterval(fetchShipData, 10000);
@@ -467,6 +466,7 @@ setInterval(() => {
     }
 }, 60000);
 
+setInterval(fetchShipData, 10000);
 
 
 // Add event listeners for layer buttons to toggle layers
@@ -491,3 +491,4 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 });
+
