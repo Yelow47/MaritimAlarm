@@ -4,11 +4,11 @@ from datetime import datetime
 
 TOKEN_URL = "https://id.barentswatch.no/connect/token"
 API_URL = "https://live.ais.barentswatch.no/v1/combined?modelType=Full&modelFormat=Geojson"
-CLIENT_ID = "XXXXXXXXXXXXX"
-CLIENT_SECRET = "XXXXXXXX"
-SCOPE = "XXXXX"
+CLIENT_ID = "XXXXXXXXXXXXXXX"
+CLIENT_SECRET = "XXXXXXXXXXX"
+SCOPE = "XXXX"
 RECEIVE_URL = "https://www.maritimalarm.no/receive.php"
-SHADOWFLEET_PATH = "/home/XXXXXX/XXXXXXX/shadowfleet.json"
+SHADOWFLEET_PATH = "/home/XXXXX/XXXXXX/shadowfleet.json"
 
 ships = {}
 
@@ -34,7 +34,13 @@ def load_shadowfleet():
     try:
         with open(SHADOWFLEET_PATH, "r") as file:
             data = json.load(file)
-            return set(data)
+            if isinstance(data, list):
+                shadowfleet_set = {str(mmsi) for mmsi in data}  # Convert MMSI numbers to strings
+                print(f"Shadowfleet loaded: {len(shadowfleet_set)} MMSI numbers.")
+                return shadowfleet_set
+            else:
+                print("Invalid shadowfleet.json format. Expected a list of MMSI numbers.")
+                return set()
     except Exception as e:
         print(f"Failed to load shadowfleet.json: {e}")
         return set()
@@ -56,6 +62,9 @@ def send_data_to_server(data, data_type):
     try:
         json_data = json.dumps(data, default=serialize_datetime)
         response = requests.post(RECEIVE_URL, data={"json_data": json_data, "type": data_type})
+        print(f"Data Sent: {json_data}")
+        print(f"Response Status Code: {response.status_code}")
+        print(f"Response Text: {response.text}")
         response.raise_for_status()
         print(f"{data_type.capitalize()} data sent to {RECEIVE_URL} successfully!")
     except requests.exceptions.RequestException as e:
@@ -68,7 +77,6 @@ def fetch_continuous_stream(token, shadowfleet_mmsi):
             "Content-Type": "application/json"
         }
         payload = {
-            "countryCodes": ["RU"],
             "modelType": "Full",
             "Downsample": False
         }
@@ -81,7 +89,13 @@ def fetch_continuous_stream(token, shadowfleet_mmsi):
                 if line:
                     try:
                         ship_data = json.loads(line.decode('utf-8'))
-                        mmsi = ship_data["mmsi"]
+                        print(f"Received Ship Data: {ship_data}")
+                        mmsi = str(ship_data["mmsi"])  # Ensure MMSI is treated as a string
+
+                        # Debugging: Check if MMSI is processed correctly
+                        print(f"Processing MMSI: {mmsi}")
+
+                        # Update ship tracking
                         if mmsi not in ships:
                             ships[mmsi] = {"mmsi": mmsi, "last_seen": datetime.utcnow()}
                         else:
@@ -98,9 +112,15 @@ def fetch_continuous_stream(token, shadowfleet_mmsi):
                             "status_text": status_mapping.get(ship_data.get("navigationalStatus"), "Unknown")
                         })
 
-                        if mmsi in shadowfleet_mmsi or ship_data.get("countryCode") == "RU":
-                            print(f"MMSI {mmsi} is being sent as 'ships'.")
+                        # Check and send data based on shadowfleet or Russian criteria
+                        if mmsi in shadowfleet_mmsi:
+                            print(f"MMSI {mmsi} is in the Shadowfleet. Sending as 'ships'.")
                             send_data_to_server(ships[mmsi], "ships")
+                        elif ship_data.get("countryCode") == "RU" or mmsi.startswith("273"):
+                            print(f"MMSI {mmsi} is a Russian ship. Sending as 'ships'.")
+                            send_data_to_server(ships[mmsi], "ships")
+                        else:
+                            print(f"MMSI {mmsi} does not match Russian or Shadowfleet criteria. Skipping.")
                     except json.JSONDecodeError as e:
                         print(f"Failed to decode JSON line: {line}, Error: {e}")
     except requests.exceptions.RequestException as e:
