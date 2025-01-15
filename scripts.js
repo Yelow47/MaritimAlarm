@@ -66,94 +66,70 @@ var alarmIcon = L.icon({
     iconAnchor: [12, 41]
 });
 
-// Function to send an alarm to the backend
+// Updated Alarm Functions
 async function sendAlarmToBackend(alarm) {
     try {
         const response = await fetch('https://www.maritimalarm.no/receive.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: new URLSearchParams({ json_data: JSON.stringify(alarm), type: 'alarms' })
+            body: new URLSearchParams({ 
+                json_data: JSON.stringify(alarm), 
+                type: 'alarms',
+                action: 'save'
+            })
         });
 
         if (!response.ok) {
             console.error('Failed to send alarm to backend:', response.statusText);
         } else {
             console.log('Alarm sent to backend:', alarm);
+            fetchAndDisplayAlarms();
         }
     } catch (error) {
         console.error('Error sending alarm to backend:', error);
     }
 }
 
-// Create an alarm and display it on the frontend
-function createAlarm(name, mmsi, reason) {
-    const alarm = { name, mmsi, reason, time: new Date().toISOString() };
-
-    // Send the alarm to the backend
-    sendAlarmToBackend(alarm);
-
-    // Display the alarm in the "alarmer" box
-    const alarmsBox = document.querySelector('.alarms-box');
-    const alarmElement = document.createElement('div');
-    alarmElement.classList.add('alarm-item');
-    alarmElement.textContent = `Ship: ${name || "Unknown"} (MMSI: ${mmsi}) - ${reason}`;
-    alarmsBox.appendChild(alarmElement);
-
-    // Remove the oldest alarm if the box is full
-    if (alarmsBox.children.length > MAX_ALARMS) {
-        alarmsBox.removeChild(alarmsBox.firstChild);
+async function fetchAndDisplayAlarms() {
+    try {
+        const response = await fetch('https://www.maritimalarm.no/receive.php?type=alarms&action=fetch');
+        if (!response.ok) {
+            throw new Error(`HTTP error while fetching alarms: ${response.status}`);
+        }
+        const alarms = await response.json();
+        
+        const alarmsBox = document.querySelector('.alarms-box');
+        alarmsBox.innerHTML = '';
+        
+        const recentAlarms = alarms.slice(-MAX_ALARMS);
+        recentAlarms.forEach(alarm => {
+            const alarmElement = document.createElement('div');
+            alarmElement.classList.add('alarm-item');
+            alarmElement.textContent = `Ship: ${alarm.name || "Unknown"} (MMSI: ${alarm.mmsi}) - ${alarm.reason}`;
+            alarmsBox.appendChild(alarmElement);
+        });
+    } catch (error) {
+        console.error('Error fetching alarms:', error);
     }
 }
-// Create modal elements
-const modalOverlay = document.createElement('div');
-modalOverlay.className = 'modal-overlay';
 
-const modalBox = document.createElement('div');
-modalBox.className = 'modal-box';
-modalBox.innerHTML = `
-    <button class="modal-close">&times;</button>
-    <h2>Om nettsiden</h2>
-    <p>Denne nettsidens formål er å overvåke sivil russisk skipsaktivitet i Norge, med hensikt å avdekke potensielle trusler mot norsk infrastruktur. Nettsiden viser nå også skip fra skyggeflåten.
-Skipene vises i sanntid, og deres posisjon og aktivitet kan trigge "alarmer". 
-En alarm trigges dersom et fartøy enten: Oppholder innenfor 1nm av infrastruktur i over 1 time.
-Eller: Slutter å transmitere AIS data i over 1 time.
-Eller: Har en hastighet på 2-5 knop i over 30 minutter.
-Disse kriteriene kan justeres ved forespørsel.
-
-NB:
-Kartet viser kun skip innenfor AIS mottakerrekkevidde, og eksluderer skip som er ankret/ligger til kai. 
-Nettsiden er ikke enda optimalisert for mobil.
-
-All AIS data tilhører Kystverket, og er hentet gjennom Barentswatch.no sin API.
-Hendvendelser kan sendes til MaritimAlarm@gmail.com
-
-
-  </p>
-`;
-
-// Append modal elements to the body
-document.body.appendChild(modalOverlay);
-document.body.appendChild(modalBox);
-
-// Show modal function
-function showModal() {
-    modalOverlay.style.display = 'block';
-    modalBox.style.display = 'block';
+function createAlarm(name, mmsi, reason) {
+    const alarm = {
+        name,
+        mmsi,
+        reason,
+        time: new Date().toISOString()
+    };
+    sendAlarmToBackend(alarm);
 }
 
-// Hide modal function
-function hideModal() {
-    modalOverlay.style.display = 'none';
-    modalBox.style.display = 'none';
-}
+// Initialize alarms display
+document.addEventListener('DOMContentLoaded', () => {
+    fetchAndDisplayAlarms();
+});
 
-// Add event listeners for open/close actions
-const aboutButton = document.querySelector('.about-button');
-const closeButton = modalBox.querySelector('.modal-close');
-
-aboutButton.addEventListener('click', showModal);
-closeButton.addEventListener('click', hideModal);
-modalOverlay.addEventListener('click', hideModal);
+// Refresh alarms every 30 seconds
+setInterval(fetchAndDisplayAlarms, 30000);
 
 // Function to classify and style pipelines
 function classifyAndStylePipelines(feature) {
@@ -250,13 +226,13 @@ function loadAndClassifyGeoJSON(filePath) {
         })
         .catch(error => console.error(`Error loading GeoJSON (File: ${filePath}):`, error));
 }
+
 // Add layer selector buttons dynamically
 function addLayerSelector() {
     const leftPanel = document.querySelector('.left-panel');
 
-    // Check if the layer-selector already exists to prevent duplication
     let selectorContainer = document.querySelector('.layer-selector');
-    if (selectorContainer) return; // Exit if the selector container is already created
+    if (selectorContainer) return;
 
     selectorContainer = document.createElement('div');
     selectorContainer.classList.add('layer-selector');
@@ -288,23 +264,17 @@ function addLayerSelector() {
         button.style.borderRadius = "5px";
         button.style.cursor = "pointer";
         button.style.opacity = "1.0";
-        button.title = `Toggle ${layer.label}`; // Add hover tooltip for clarity
+        button.title = `Toggle ${layer.label}`;
 
-        // Add event listener to toggle layers
         button.addEventListener('click', () => {
-            console.log(`Button clicked for layer: ${layer.type}`); // Debugging log
             if (geojsonLayers[layer.type]) {
                 if (map.hasLayer(geojsonLayers[layer.type])) {
-                    console.log(`Removing layer: ${layer.type}`);
                     map.removeLayer(geojsonLayers[layer.type]);
-                    button.style.opacity = "0.5"; // Dim the button to indicate it's inactive
+                    button.style.opacity = "0.5";
                 } else {
-                    console.log(`Adding layer: ${layer.type}`);
                     map.addLayer(geojsonLayers[layer.type]);
-                    button.style.opacity = "1.0"; // Brighten the button to indicate it's active
+                    button.style.opacity = "1.0";
                 }
-            } else {
-                console.error(`Layer type "${layer.type}" not found in geojsonLayers.`);
             }
         });
 
@@ -312,18 +282,15 @@ function addLayerSelector() {
         selectorContainer.appendChild(buttonContainer);
     });
 
-    // Insert the selector container above the "Om nettsiden" button
     const aboutButton = leftPanel.querySelector('.about-button');
     if (aboutButton) {
         leftPanel.insertBefore(selectorContainer, aboutButton);
     } else {
-        leftPanel.appendChild(selectorContainer); // Fallback in case "Om nettsiden" button is missing
+        leftPanel.appendChild(selectorContainer);
     }
 }
 
-// Call the function to dynamically add the layer selectors
 addLayerSelector();
-
 const geojsonFiles = [
     'data/bodo.geojson',
     'data/celtic.geojson',
@@ -405,7 +372,121 @@ const geojsonFiles = [
 ];
 geojsonFiles.forEach(filePath => loadAndClassifyGeoJSON(filePath));
 
+// Adding alarm conditions for proximity and low-speed vessels
+const PROXIMITY_THRESHOLD = 1852; // 1 nautical mile in meters
+const LOW_SPEED_MIN = 2; // knots
+const LOW_SPEED_MAX = 5; // knots
+const LOW_SPEED_DURATION = 1800000; // 30 minutes in milliseconds
+
+var speedTracker = {};
+
+// Modify the fetchShipData function to include proximity and low-speed checks
 function fetchShipData() {
+    fetch('https://www.maritimalarm.no/receive.php?type=ships')
+        .then(response => {
+            if (!response.ok) throw new Error(`HTTP error while fetching ship data: ${response.status}`);
+            return response.json();
+        })
+        .then(shipData => {
+            const currentTime = Date.now();
+            Object.values(shipData).forEach(ship => {
+                const { mmsi, latitude, longitude, heading, name, destination, navigational_status, speed_over_ground } = ship;
+
+                if ([1, 5].includes(navigational_status)) return;
+
+                // Update last seen tracker
+                if (!lastSeenTracker[mmsi]) {
+                    lastSeenTracker[mmsi] = { lastSeen: currentTime, name };
+                } else {
+                    lastSeenTracker[mmsi].lastSeen = currentTime;
+                    lastSeenTracker[mmsi].alarmTriggered = false;
+                }
+
+                // Proximity check
+                if (!proximityTracker[mmsi]) {
+                    proximityTracker[mmsi] = { proximityStart: null };
+                }
+                const isCloseToInfra = checkProximityToInfrastructure(latitude, longitude);
+                if (isCloseToInfra) {
+                    if (!proximityTracker[mmsi].proximityStart) {
+                        proximityTracker[mmsi].proximityStart = currentTime;
+                    } else if (currentTime - proximityTracker[mmsi].proximityStart > 3600000) {
+                        createAlarm(name, mmsi, "Within 1 nautical mile of infrastructure for over 1 hour");
+                        proximityTracker[mmsi].proximityStart = null;
+                    }
+                } else {
+                    proximityTracker[mmsi].proximityStart = null;
+                }
+
+                // Low-speed check
+                if (!speedTracker[mmsi]) {
+                    speedTracker[mmsi] = { lowSpeedStart: null };
+                }
+                if (speed_over_ground >= LOW_SPEED_MIN && speed_over_ground <= LOW_SPEED_MAX) {
+                    if (!speedTracker[mmsi].lowSpeedStart) {
+                        speedTracker[mmsi].lowSpeedStart = currentTime;
+                    } else if (currentTime - speedTracker[mmsi].lowSpeedStart > LOW_SPEED_DURATION) {
+                        createAlarm(name, mmsi, "Maintained a speed of 2-5 knots for over 30 minutes");
+                        speedTracker[mmsi].lowSpeedStart = null;
+                    }
+                } else {
+                    speedTracker[mmsi].lowSpeedStart = null;
+                }
+
+                // Update or create ship marker
+                if (shipMarkers[mmsi]) {
+                    map.removeLayer(shipMarkers[mmsi]);
+                }
+
+                const marker = L.marker([latitude, longitude], {
+                    icon: getShipIcon(heading || 0)
+                }).bindPopup(`
+                    <strong>Name:</strong> ${name || "Unknown"}<br>
+                    <strong>MMSI:</strong> ${mmsi}<br>
+                    <strong>Destination:</strong> ${destination || "Unknown"}<br>
+                    <strong>Heading:</strong> ${heading || "Unknown"}°<br>
+                    <strong>Status:</strong> ${statusMapping[navigational_status] || "Unknown"}<br>
+                    <strong>Speed:</strong> ${speed_over_ground || "Unknown"} knots
+                `);
+
+                marker.addTo(map);
+                shipMarkers[mmsi] = marker;
+            });
+        })
+        .catch(error => console.error('Error fetching ship data:', error));
+}
+
+// Helper function to check proximity to infrastructure
+function checkProximityToInfrastructure(lat, lon) {
+    
+    function checkProximityToInfrastructure(lat, lon) {
+        let isClose = false;
+        geojsonFiles.forEach(filePath => {
+            fetch(filePath)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.type === "FeatureCollection" && data.features) {
+                        data.features.forEach(feature => {
+                            const coordinates = feature.geometry.coordinates;
+                            const pipeline = turf.multiLineString(coordinates);
+                            const shipPoint = turf.point([lon, lat]);
+                            const distance = turf.pointToLineDistance(shipPoint, pipeline, { units: 'meters' });
+                            if (distance <= PROXIMITY_THRESHOLD) {
+                                isClose = true;
+                            }
+                        });
+                    } else {
+                        console.error('Invalid GeoJSON format in file:', filePath);
+                    }
+                })
+                .catch(error => console.error('Error checking proximity:', error));
+        });
+        return isClose;
+    }
+    
+    return Math.random() < 0.1; // Simulate a proximity check for testing
+}
+
     fetch('https://www.maritimalarm.no/receive.php?type=ships')
         .then(response => {
             if (!response.ok) throw new Error(`HTTP error while fetching ship data: ${response.status}`);
@@ -445,8 +526,6 @@ function fetchShipData() {
             });
         })
         .catch(error => console.error('Error fetching ship data:', error));
-}
-
 
 // Periodically fetch ship data and check last-seen status
 setInterval(fetchShipData, 10000);
@@ -467,7 +546,6 @@ setInterval(() => {
 }, 60000);
 
 setInterval(fetchShipData, 10000);
-
 
 // Add event listeners for layer buttons to toggle layers
 document.addEventListener("DOMContentLoaded", function () {
@@ -491,4 +569,3 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 });
-
