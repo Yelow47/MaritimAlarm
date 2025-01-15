@@ -1,31 +1,40 @@
 <?php
+// Add CORS headers for cross-origin requests
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
 
+// Handle preflight OPTIONS request
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
     exit;
 }
 
+// Maximum size of JSON file in KB (1000 KB)
 define('MAX_FILE_SIZE', 1000 * 1024);
+// Time threshold for data retention (5 hours in seconds)
 define('DATA_RETENTION_THRESHOLD', 5 * 60 * 60);
 
+// Function to cleanup old ship data based on time and remove outdated entries
 function pruneOldShipData($existingData, $newData) {
     $currentTime = time();
 
+    // Ensure $existingData is an array
     if (!is_array($existingData)) {
         $existingData = [];
     }
 
+    // Filter out entries older than the threshold
     $existingData = array_filter($existingData, function ($entry) use ($currentTime) {
         return isset($entry['last_seen']) && (strtotime($entry['last_seen']) > ($currentTime - DATA_RETENTION_THRESHOLD));
     });
 
+    // Update or add the new ship data
     $existingData[$newData['mmsi']] = $newData;
     return $existingData;
 }
 
+// Handle POST requests for receiving data
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['json_data']) && isset($_POST['type'])) {
         $data = json_decode($_POST['json_data'], true);
@@ -76,6 +85,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     exit;
 }
 
+// Handle GET requests for retrieving data
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     if (isset($_GET['type'])) {
         $type = $_GET['type'];
@@ -107,4 +117,3 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 echo "Invalid request method.";
 exit;
 ?>
-
